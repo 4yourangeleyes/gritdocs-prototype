@@ -126,14 +126,14 @@ class AuthService {
 
   // Update user profile
   async updateProfile(userId: string, profileData: ProfileUpdateData) {
-    const { error } = await supabase
-      .from('profiles')
+    const { error } = await (supabase
+      .from('profiles') as any)
       .update({
         full_name: profileData.fullName,
-        company_name: profileData.companyName,
-        registration_number: profileData.registrationNumber,
+        company_name: profileData.companyName || null,
+        registration_number: profileData.registrationNumber || null,
         jurisdiction: profileData.jurisdiction,
-        logo_url: profileData.logoUrl,
+        logo_url: profileData.logoUrl || null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', userId);
@@ -215,14 +215,14 @@ class AuthService {
     registrationNumber?: string;
     jurisdiction?: string;
   }) {
-    const { error } = await supabase
-      .from('profiles')
+    const { error } = await (supabase
+      .from('profiles') as any)
       .insert({
         id: userId,
         email: profileData.email,
         full_name: profileData.fullName,
-        company_name: profileData.companyName,
-        registration_number: profileData.registrationNumber,
+        company_name: profileData.companyName || null,
+        registration_number: profileData.registrationNumber || null,
         jurisdiction: profileData.jurisdiction || 'New Zealand',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
