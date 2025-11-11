@@ -1,0 +1,30 @@
+/* CSS Custom Properties for better IntelliSense */
+:root {
+  /* Grit Color Palette */
+  --grit-50: #f8f9fa;
+  --grit-100: #e9ecef;
+  --grit-200: #dee2e6;
+  --grit-300: #ced4da;
+  --grit-400: #adb5bd;
+  --grit-500: #6c757d;
+  --grit-600: #495057;
+  --grit-700: #343a40;
+  --grit-800: #212529;
+  --grit-900: #2A2A2A;
+
+  /* Brand Colors */
+  --primary-orange: #FF6B35;
+  --success-green: #4A7C59;
+  --warning-amber: #F39C12;
+  --danger-red: #C0392B;
+
+  /* Typography */
+  --font-family-primary: Arial, sans-serif;
+  --font-weight-normal: 400;
+  --font-weight-bold: 700;
+
+  /* Spacing */
+  --touch-target-min: 56px;
+  --border-radius: 0px;
+  --border-width: 2px;
+}

@@ -1,0 +1,234 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* GritDocs - Mobile-first, production-ready styling */
+
+@layer base {
+  html {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-gray-50 text-gray-900;
+    margin: 0;
+    padding: 0;
+    font-weight: 400;
+    line-height: 1.6;
+    /* Prevent horizontal scroll on mobile */
+    overflow-x: hidden;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+
+  /* Improve tap targets for mobile */
+  button, input, select, textarea, a {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  /* Focus management for accessibility */
+  *:focus {
+    outline: 2px solid #f97316;
+    outline-offset: 2px;
+  }
+
+  /* Smooth transitions for better UX */
+  * {
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@layer components {
+  
+  /* Modern Button System - Mobile Optimized */
+  .btn-primary {
+    @apply bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white font-semibold py-3 px-6 rounded-lg text-base transition-colors duration-150 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 shadow-sm hover:shadow-md;
+    min-height: 48px;
+    min-width: 44px;
+  }
+  
+  .btn-secondary {
+    @apply bg-white hover:bg-gray-50 active:bg-gray-100 text-gray-900 font-semibold py-3 px-6 rounded-lg text-base transition-colors duration-150 border border-gray-300 hover:border-gray-400 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 shadow-sm hover:shadow-md;
+    min-height: 48px;
+    min-width: 44px;
+  }
+  
+  .btn-action {
+    @apply bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 px-6 rounded-lg text-base transition-colors duration-150 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm hover:shadow-md;
+    min-height: 48px;
+    min-width: 44px;
+  }
+
+  .btn-danger {
+    @apply bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-semibold py-3 px-6 rounded-lg text-base transition-colors duration-150 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 shadow-sm hover:shadow-md;
+    min-height: 48px;
+    min-width: 44px;
+  }
+  
+  /* Input System - Mobile Friendly */
+  .input-field {
+    @apply w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors duration-150 text-base;
+    min-height: 48px;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  
+  .input-label {
+    @apply block text-sm font-medium text-gray-700 mb-2;
+  }
+  
+  /* Card System - Modern & Clean */
+  .card {
+    @apply bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-150;
+  }
+  
+  .card-interactive {
+    @apply bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md hover:border-orange-300 cursor-pointer transition-all duration-150;
+  }
+
+  .card-interactive:active {
+    transform: scale(0.98);
+  }
+
+  .card-selected {
+    @apply border-orange-500 bg-orange-50 ring-1 ring-orange-500;
+  }
+  
+  /* Layout System - Responsive */
+  .container {
+    @apply w-full max-w-lg mx-auto px-4 sm:px-6;
+  }
+  
+  .container-md {
+    @apply w-full max-w-2xl mx-auto px-4 sm:px-6;
+  }
+
+  .container-lg {
+    @apply w-full max-w-4xl mx-auto px-4 sm:px-6;
+  }
+
+  .container-full {
+    @apply w-full mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  /* Typography - Clear Hierarchy */
+  .heading-xl {
+    @apply text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight;
+  }
+  
+  .heading-lg {
+    @apply text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 leading-tight;
+  }
+
+  .heading-md {
+    @apply text-lg sm:text-xl font-semibold text-gray-900 leading-tight;
+  }
+
+  .heading-sm {
+    @apply text-base sm:text-lg font-semibold text-gray-900 leading-tight;
+  }
+  
+  .body-large {
+    @apply text-lg text-gray-700 leading-relaxed;
+  }
+
+  .body-base {
+    @apply text-base text-gray-700 leading-relaxed;
+  }
+
+  .body-small {
+    @apply text-sm text-gray-600 leading-relaxed;
+  }
+  
+  /* Screen-specific layouts */
+  .screen-signin {
+    @apply min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 flex items-center justify-center p-4;
+  }
+  
+  .screen-dashboard {
+    @apply min-h-screen bg-gray-50;
+  }
+
+  .screen-chat {
+    @apply min-h-screen bg-gray-50 flex flex-col;
+  }
+
+  .screen-canvas {
+    @apply min-h-screen bg-white;
+  }
+
+  /* Navigation & Header */
+  .nav-mobile {
+    @apply fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 safe-area-inset-bottom;
+    z-index: 50;
+  }
+
+  .nav-desktop {
+    @apply hidden lg:block fixed left-0 top-0 bottom-0 w-64 bg-white border-r border-gray-200 p-6;
+    z-index: 40;
+  }
+
+  /* Safe Area for iOS */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Loading States */
+  .loading-spinner {
+    @apply animate-spin rounded-full border-2 border-gray-300 border-t-orange-600;
+  }
+
+  /* Utility Classes */
+  .scale-on-press:active {
+    transform: scale(0.98);
+  }
+
+  .scale-on-press-sm:active {
+    transform: scale(0.95);
+  }
+
+  /* Mobile Menu */
+  .mobile-menu-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-50 z-40;
+  }
+
+  .mobile-menu {
+    @apply fixed right-0 top-0 bottom-0 w-80 bg-white shadow-xl transform transition-transform duration-300 ease-in-out z-50;
+  }
+
+  .mobile-menu.closed {
+    transform: translateX(100%);
+  }
+
+  .mobile-menu.open {
+    transform: translateX(0);
+  }
+}
+
+/* Print styles for documents */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+}

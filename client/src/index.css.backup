@@ -1,0 +1,254 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* GritDocs - No fancy fonts, just bold, industrial styling */
+
+@layer base {
+  html {
+    font-family: Arial, Helvetica, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  body {
+    @apply bg-white text-grit-900;
+    margin: 0;
+    padding: 0;
+    font-weight: 500; /* Slightly bolder by default */
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-neutral-100;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-neutral-300 rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-neutral-400;
+  }
+}
+
+@layer components {
+  /* Button Components */
+  .btn-primary {
+    @apply bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white font-semibold py-3 px-6 rounded-xl shadow-soft hover:shadow-medium transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-brand-200 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-secondary {
+    @apply bg-white hover:bg-neutral-50 active:bg-neutral-100 text-neutral-700 font-semibold py-3 px-6 rounded-xl border border-neutral-200 hover:border-neutral-300 shadow-soft hover:shadow-medium transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-neutral-200;
+  }
+  
+  .btn-outline {
+    @apply border-2 border-brand-500 text-brand-600 hover:bg-brand-600 hover:text-white active:bg-brand-700 font-semibold py-3 px-6 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-brand-200;
+  }
+  
+  .btn-success {
+    @apply bg-success-600 hover:bg-success-700 active:bg-success-800 text-white font-semibold py-3 px-6 rounded-xl shadow-soft hover:shadow-medium transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-success-200;
+  }
+  
+  .btn-warning {
+    @apply bg-warning-600 hover:bg-warning-700 active:bg-warning-800 text-white font-semibold py-3 px-6 rounded-xl shadow-soft hover:shadow-medium transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-warning-200;
+  }
+  
+  .btn-ghost {
+    @apply text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 active:bg-neutral-200 font-medium py-3 px-6 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-neutral-200;
+  }
+  
+  .btn-icon {
+    @apply p-3 rounded-xl hover:bg-neutral-100 active:bg-neutral-200 text-neutral-600 hover:text-neutral-900 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-neutral-200;
+  }
+  
+  /* Form Components */
+  .input-field {
+    @apply w-full px-4 py-3.5 bg-white border border-neutral-200 rounded-xl text-neutral-900 placeholder-neutral-400 focus:ring-4 focus:ring-brand-200 focus:border-brand-500 transition-all duration-200 disabled:bg-neutral-50 disabled:text-neutral-500;
+  }
+  
+  .input-error {
+    @apply border-error-500 focus:ring-error-200 focus:border-error-500;
+  }
+  
+  .input-success {
+    @apply border-success-500 focus:ring-success-200 focus:border-success-500;
+  }
+  
+  .label {
+    @apply block text-sm font-semibold text-neutral-700 mb-2;
+  }
+  
+  .label-required::after {
+    content: ' *';
+    @apply text-error-500;
+  }
+  
+  .help-text {
+    @apply text-sm text-neutral-600 mt-1;
+  }
+  
+  .error-text {
+    @apply text-sm text-error-600 mt-1;
+  }
+  
+  /* Card Components */
+  .card {
+    @apply bg-white rounded-2xl shadow-soft border border-neutral-200 p-6 hover:shadow-medium transition-shadow duration-200;
+  }
+  
+  .card-interactive {
+    @apply bg-white rounded-2xl shadow-soft border border-neutral-200 p-6 hover:shadow-medium hover:scale-[1.02] active:scale-[0.98] cursor-pointer transition-all duration-200;
+  }
+  
+  .card-flat {
+    @apply bg-white rounded-2xl border border-neutral-200 p-6;
+  }
+  
+  .card-elevated {
+    @apply bg-white rounded-2xl shadow-large border border-neutral-200 p-6;
+  }
+  
+  /* Layout Components */
+  .container-narrow {
+    @apply max-w-2xl mx-auto px-6;
+  }
+  
+  .container-wide {
+    @apply max-w-6xl mx-auto px-6;
+  }
+  
+  .minimalist-container {
+    @apply max-w-2xl mx-auto px-6 py-12;
+  }
+  
+  .page-header {
+    @apply mb-8 space-y-2;
+  }
+  
+  .page-title {
+    @apply text-3xl font-bold text-neutral-900 text-balance;
+  }
+  
+  .page-subtitle {
+    @apply text-lg text-neutral-600 text-balance;
+  }
+  
+  /* Navigation Components */
+  .nav-item {
+    @apply flex flex-col items-center py-3 px-4 rounded-xl transition-all duration-200 text-neutral-600 hover:text-brand-600 hover:bg-brand-50;
+  }
+  
+  .nav-item-active {
+    @apply text-brand-600 bg-brand-50 border border-brand-200;
+  }
+  
+  /* Status Components */
+  .status-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+  }
+  
+  .status-draft {
+    @apply bg-neutral-100 text-neutral-800;
+  }
+  
+  .status-sent {
+    @apply bg-brand-100 text-brand-800;
+  }
+  
+  .status-paid {
+    @apply bg-success-100 text-success-800;
+  }
+  
+  .status-overdue {
+    @apply bg-error-100 text-error-800;
+  }
+  
+  /* Compliance Components */
+  .compliance-indicator {
+    @apply flex items-center space-x-2 text-sm;
+  }
+  
+  .compliance-check {
+    @apply text-success-600;
+  }
+  
+  .compliance-warning {
+    @apply text-warning-600;
+  }
+  
+  .compliance-error {
+    @apply text-error-600;
+  }
+  
+  /* Special Effects */
+  .gradient-text {
+    @apply bg-gradient-to-r from-brand-600 to-brand-800 bg-clip-text text-transparent;
+  }
+  
+  .floating-element {
+    @apply fixed z-50 animate-fade-in;
+  }
+  
+  .backdrop-blur {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .animate-press {
+    @apply transition-transform duration-100 active:scale-95;
+  }
+  
+  /* Focus utilities */
+  .focus-brand {
+    @apply focus:outline-none focus:ring-4 focus:ring-brand-200;
+  }
+  
+  .focus-error {
+    @apply focus:outline-none focus:ring-4 focus:ring-error-200;
+  }
+  
+  .focus-success {
+    @apply focus:outline-none focus:ring-4 focus:ring-success-200;
+  }
+}
+
+/* Print styles */
+@media print {
+  .print\\:hidden {
+    display: none !important;
+  }
+  
+  .print\\:block {
+    display: block !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+}
