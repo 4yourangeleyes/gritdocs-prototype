@@ -27,16 +27,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Check for existing session
     const initializeAuth = async () => {
+      console.log('🚀 AuthContext: Initializing auth...');
       try {
         const currentUser = await authService.getCurrentUser();
+        console.log('👤 AuthContext: Current user:', currentUser?.email || 'None');
+        
         if (currentUser) {
+          console.log('📋 AuthContext: Fetching user profile...');
           const userProfile = await authService.getUserProfile(currentUser.id);
+          console.log('✅ AuthContext: Profile loaded:', userProfile ? 'Profile found' : 'No profile');
           setUser(currentUser);
           setProfile(userProfile);
         }
       } catch (error) {
-        console.error('Error initializing auth:', error);
+        console.error('❌ AuthContext: Error initializing auth:', error);
       } finally {
+        console.log('🏁 AuthContext: Initialization complete, setting loading false');
         setIsLoading(false);
       }
     };
@@ -45,29 +51,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Listen for auth changes
     const { data: { subscription } } = authService.onAuthStateChange(async (event, session) => {
-      console.log('Auth state change:', event, session?.user?.email);
+      console.log('🔄 Auth state change:', event, session?.user?.email || 'No user');
       
       try {
         if (event === 'SIGNED_IN' && session?.user) {
+          console.log('✅ User signed in, processing...', session.user.email);
           setIsLoading(true);
           
           // Handle OAuth profile creation with error handling
           try {
+            console.log('📝 Creating/updating OAuth profile...');
             await authService.handleOAuthProfile(session.user);
+            console.log('✅ OAuth profile handled successfully');
           } catch (profileError) {
-            console.error('Profile creation error (non-fatal):', profileError);
+            console.error('⚠️ Profile creation error (non-fatal):', profileError);
           }
           
+          console.log('📋 Fetching user profile from database...');
           const userProfile = await authService.getUserProfile(session.user.id);
+          console.log('📊 Profile result:', userProfile ? 'Found' : 'Not found');
+          
           setUser(session.user);
           setProfile(userProfile);
+          console.log('🎉 Auth state updated successfully');
         } else if (event === 'SIGNED_OUT') {
+          console.log('👋 User signed out');
           setUser(null);
           setProfile(null);
+        } else {
+          console.log('ℹ️ Other auth event:', event);
         }
       } catch (error) {
-        console.error('Auth state change error:', error);
+        console.error('❌ Auth state change error:', error);
       } finally {
+        console.log('🏁 Auth state change complete, setting loading false');
         setIsLoading(false);
       }
     });
