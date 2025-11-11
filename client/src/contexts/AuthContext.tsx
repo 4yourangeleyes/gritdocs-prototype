@@ -25,6 +25,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
+    
     // Check for existing session
     const initializeAuth = async () => {
       console.log('🚀 AuthContext: Initializing auth...');
@@ -32,18 +34,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const currentUser = await authService.getCurrentUser();
         console.log('👤 AuthContext: Current user:', currentUser?.email || 'None');
         
-        if (currentUser) {
-          console.log('📋 AuthContext: Fetching user profile...');
-          const userProfile = await authService.getUserProfile(currentUser.id);
-          console.log('✅ AuthContext: Profile loaded:', userProfile ? 'Profile found' : 'No profile');
+        if (mounted && currentUser) {
           setUser(currentUser);
-          setProfile(userProfile);
+          // Skip profile loading during initialization to prevent hangs
+          console.log('⚡ AuthContext: User found, skipping profile fetch for faster load');
+          setProfile(null);
         }
       } catch (error) {
         console.error('❌ AuthContext: Error initializing auth:', error);
       } finally {
-        console.log('🏁 AuthContext: Initialization complete, setting loading false');
-        setIsLoading(false);
+        if (mounted) {
+          console.log('🏁 AuthContext: Initialization complete');
+          setIsLoading(false);
+        }
       }
     };
 
@@ -53,56 +56,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data: { subscription } } = authService.onAuthStateChange(async (event, session) => {
       console.log('🔄 Auth state change:', event, session?.user?.email || 'No user');
       
+      if (!mounted) return;
+      
       try {
         if (event === 'SIGNED_IN' && session?.user) {
-          console.log('✅ User signed in, processing...', session.user.email);
-          setIsLoading(true);
-          
-          // Handle OAuth profile creation with error handling
-          try {
-            console.log('📝 Creating/updating OAuth profile...');
-            await authService.handleOAuthProfile(session.user);
-            console.log('✅ OAuth profile handled successfully');
-          } catch (profileError) {
-            console.error('⚠️ Profile creation error (non-fatal):', profileError);
-          }
-          
-          console.log('📋 Fetching user profile from database...');
-          
-          // Add timeout to profile fetch to prevent infinite hang
-          let userProfile: Profile | null = null;
-          try {
-            const profilePromise = authService.getUserProfile(session.user.id);
-            const timeoutPromise = new Promise<null>((_, reject) => 
-              setTimeout(() => reject(new Error('Profile fetch timeout')), 5000)
-            );
-            
-            userProfile = await Promise.race([profilePromise, timeoutPromise]);
-            console.log('📊 Profile result:', userProfile ? 'Found' : 'Not found');
-          } catch (profileError) {
-            console.log('⚠️ Profile fetch failed/timed out, continuing without profile:', profileError);
-            userProfile = null;
-          }
-          
+          console.log('✅ User signed in:', session.user.email);
           setUser(session.user);
-          setProfile(userProfile);
-          console.log('🎉 Auth state updated successfully (profile:', userProfile ? 'loaded' : 'skipped', ')');
+          setProfile(null); // Start without profile to prevent UI hang
+          
+          // Load profile in background without blocking UI
+          setTimeout(async () => {
+            try {
+              const userProfile = await authService.getUserProfile(session.user.id);
+              if (mounted) {
+                setProfile(userProfile);
+                console.log('📊 Profile loaded in background:', userProfile ? 'Found' : 'None');
+              }
+            } catch (error) {
+              console.log('⚠️ Background profile load failed:', error);
+            }
+          }, 100);
+          
         } else if (event === 'SIGNED_OUT') {
           console.log('👋 User signed out');
           setUser(null);
           setProfile(null);
-        } else {
-          console.log('ℹ️ Other auth event:', event);
         }
       } catch (error) {
         console.error('❌ Auth state change error:', error);
-      } finally {
-        console.log('🏁 Auth state change complete, setting loading false');
+      }
+      
+      if (mounted) {
         setIsLoading(false);
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const login = async (email: string, password: string) => {

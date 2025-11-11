@@ -14,11 +14,11 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   if (isLoading) {
     console.log('⏳ ProtectedRoute: Showing loading screen');
     return (
-      <div className="min-h-screen flex items-center justify-center bg-grit-dark">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-orange-100">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-grit-orange border-t-transparent mx-auto mb-4"></div>
-          <p className="text-grit-light font-bold">LOADING GRITDOCS...</p>
-          <p className="text-grit-light text-sm mt-2">Debug: isLoading={String(isLoading)}, isAuthenticated={String(isAuthenticated)}</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-orange-500 border-t-transparent mx-auto mb-4"></div>
+          <p className="text-gray-900 font-bold text-lg">Loading GritDocs...</p>
+          <p className="text-gray-600 text-sm mt-2">Getting everything ready for you</p>
         </div>
       </div>
     );

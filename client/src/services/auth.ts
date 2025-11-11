@@ -82,12 +82,13 @@ class AuthService {
 
   // Sign in with Google OAuth
   async signInWithGoogle(): Promise<{ error: AuthError | null }> {
-    // Always redirect to production URL for deployed version
-    const redirectUrl = window.location.hostname === 'gritdocs-mvp.netlify.app' 
+    // Use production URL when deployed, localhost only during development
+    const isProduction = window.location.hostname !== 'localhost';
+    const redirectUrl = isProduction 
       ? 'https://gritdocs-mvp.netlify.app/'
-      : window.location.hostname === 'localhost'
-      ? 'http://localhost:3000/'
-      : `${window.location.origin}/`;
+      : 'http://localhost:3000/';
+      
+    console.log('🔗 Google OAuth redirect URL:', redirectUrl);
       
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -115,23 +116,30 @@ class AuthService {
     return user;
   }
 
-  // Get user profile
+  // Get user profile with timeout protection
   async getUserProfile(userId: string) {
     console.log('🔍 AuthService: Fetching profile for user:', userId);
     
     try {
+      // Add timeout to prevent infinite hangs
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
+        .abortSignal(controller.signal)
         .single();
 
-      if (error) {
+      clearTimeout(timeoutId);
+
+      if (error && error.code !== 'PGRST116') { // Ignore "not found" errors
         console.error('❌ AuthService: Error fetching profile:', error);
         return null;
       }
 
-      console.log('✅ AuthService: Profile fetched successfully:', data ? 'Found' : 'Not found');
+      console.log('✅ AuthService: Profile fetched:', data ? 'Found' : 'Not found');
       return data;
     } catch (err) {
       console.error('❌ AuthService: Exception in getUserProfile:', err);
@@ -256,29 +264,19 @@ class AuthService {
     console.log('🔧 AuthService: Handling OAuth profile for user:', user.email);
     
     try {
-      // TEMPORARY FIX: Skip profile check to avoid database hang
-      console.log('⚡ AuthService: Skipping profile check (temporary fix for database hang)');
-      
-      // Try to create profile directly (will fail silently if exists)
-      try {
-        console.log('📝 AuthService: Attempting profile creation...');
-        const metadata = user.user_metadata || {};
-        await this.createProfile(user.id, {
-          email: user.email || '',
-          fullName: metadata.full_name || metadata.name || 'User',
-          companyName: metadata.company_name,
-          registrationNumber: metadata.registration_number,
-          jurisdiction: 'New Zealand',
-        });
-        console.log('✅ AuthService: Profile creation attempted');
-      } catch (createError) {
-        console.log('ℹ️ AuthService: Profile creation failed (likely already exists):', createError);
-      }
-      
+      // Quick profile creation without blocking UI
+      const metadata = user.user_metadata || {};
+      await this.createProfile(user.id, {
+        email: user.email || '',
+        fullName: metadata.full_name || metadata.name || 'User',
+        companyName: metadata.company_name,
+        registrationNumber: metadata.registration_number,
+        jurisdiction: 'New Zealand',
+      });
+      console.log('✅ AuthService: Profile created successfully');
     } catch (error) {
-      console.error('❌ AuthService: Error in handleOAuthProfile:', error);
-      // Don't throw - let auth continue even if profile handling fails
-      console.log('🔄 AuthService: Continuing auth flow despite profile error');
+      console.log('ℹ️ AuthService: Profile creation failed (likely already exists):', error);
+      // Continue without throwing - this is expected for existing users
     }
   }
 }
