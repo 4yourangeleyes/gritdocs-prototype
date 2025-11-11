@@ -45,18 +45,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Listen for auth changes
     const { data: { subscription } } = authService.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        // Handle OAuth profile creation
-        await authService.handleOAuthProfile(session.user);
-        
-        const userProfile = await authService.getUserProfile(session.user.id);
-        setUser(session.user);
-        setProfile(userProfile);
-      } else if (event === 'SIGNED_OUT') {
-        setUser(null);
-        setProfile(null);
+      console.log('Auth state change:', event, session?.user?.email);
+      
+      try {
+        if (event === 'SIGNED_IN' && session?.user) {
+          setIsLoading(true);
+          
+          // Handle OAuth profile creation with error handling
+          try {
+            await authService.handleOAuthProfile(session.user);
+          } catch (profileError) {
+            console.error('Profile creation error (non-fatal):', profileError);
+          }
+          
+          const userProfile = await authService.getUserProfile(session.user.id);
+          setUser(session.user);
+          setProfile(userProfile);
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+          setProfile(null);
+        }
+      } catch (error) {
+        console.error('Auth state change error:', error);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     });
 
     return () => subscription.unsubscribe();
@@ -110,6 +123,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { error } = await authService.signInWithGoogle();
       if (error) throw error;
+      // Note: Don't set loading false here - let the auth state change handler do it
     } catch (error: any) {
       setIsLoading(false);
       throw new Error(error.message || 'Google login failed');
