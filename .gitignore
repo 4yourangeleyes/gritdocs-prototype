@@ -41,3 +41,5 @@ coverage/
 # PWA build files
 /client/public/sw.js
 /client/public/workbox-*
+# Local Netlify folder
+.netlify
