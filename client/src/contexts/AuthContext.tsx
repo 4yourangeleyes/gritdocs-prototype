@@ -68,12 +68,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
           
           console.log('📋 Fetching user profile from database...');
-          const userProfile = await authService.getUserProfile(session.user.id);
-          console.log('📊 Profile result:', userProfile ? 'Found' : 'Not found');
+          
+          // Add timeout to profile fetch to prevent infinite hang
+          let userProfile: Profile | null = null;
+          try {
+            const profilePromise = authService.getUserProfile(session.user.id);
+            const timeoutPromise = new Promise<null>((_, reject) => 
+              setTimeout(() => reject(new Error('Profile fetch timeout')), 5000)
+            );
+            
+            userProfile = await Promise.race([profilePromise, timeoutPromise]);
+            console.log('📊 Profile result:', userProfile ? 'Found' : 'Not found');
+          } catch (profileError) {
+            console.log('⚠️ Profile fetch failed/timed out, continuing without profile:', profileError);
+            userProfile = null;
+          }
           
           setUser(session.user);
           setProfile(userProfile);
-          console.log('🎉 Auth state updated successfully');
+          console.log('🎉 Auth state updated successfully (profile:', userProfile ? 'loaded' : 'skipped', ')');
         } else if (event === 'SIGNED_OUT') {
           console.log('👋 User signed out');
           setUser(null);
