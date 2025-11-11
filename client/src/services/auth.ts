@@ -82,8 +82,10 @@ class AuthService {
 
   // Sign in with Google OAuth
   async signInWithGoogle(): Promise<{ error: AuthError | null }> {
-    // Use production URL for deployed version, localhost for development
-    const redirectUrl = window.location.hostname === 'localhost' 
+    // Always redirect to production URL for deployed version
+    const redirectUrl = window.location.hostname === 'gritdocs-mvp.netlify.app' 
+      ? 'https://gritdocs-mvp.netlify.app/'
+      : window.location.hostname === 'localhost'
       ? 'http://localhost:3000/'
       : `${window.location.origin}/`;
       
