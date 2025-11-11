@@ -117,18 +117,26 @@ class AuthService {
 
   // Get user profile
   async getUserProfile(userId: string) {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
+    console.log('🔍 AuthService: Fetching profile for user:', userId);
+    
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
 
-    if (error) {
-      console.error('Error fetching profile:', error);
+      if (error) {
+        console.error('❌ AuthService: Error fetching profile:', error);
+        return null;
+      }
+
+      console.log('✅ AuthService: Profile fetched successfully:', data ? 'Found' : 'Not found');
+      return data;
+    } catch (err) {
+      console.error('❌ AuthService: Exception in getUserProfile:', err);
       return null;
     }
-
-    return data;
   }
 
   // Update user profile
@@ -245,19 +253,31 @@ class AuthService {
 
   // Handle OAuth sign-in profile creation
   async handleOAuthProfile(user: User): Promise<void> {
-    // Check if profile already exists
-    const existingProfile = await this.getUserProfile(user.id);
+    console.log('🔧 AuthService: Handling OAuth profile for user:', user.email);
     
-    if (!existingProfile) {
-      // Create profile for OAuth users
-      const metadata = user.user_metadata || {};
-      await this.createProfile(user.id, {
-        email: user.email || '',
-        fullName: metadata.full_name || metadata.name || 'User',
-        companyName: metadata.company_name,
-        registrationNumber: metadata.registration_number,
-        jurisdiction: 'New Zealand',
-      });
+    try {
+      // Check if profile already exists
+      console.log('🔍 AuthService: Checking for existing profile...');
+      const existingProfile = await this.getUserProfile(user.id);
+      
+      if (!existingProfile) {
+        console.log('📝 AuthService: Creating new OAuth profile...');
+        // Create profile for OAuth users
+        const metadata = user.user_metadata || {};
+        await this.createProfile(user.id, {
+          email: user.email || '',
+          fullName: metadata.full_name || metadata.name || 'User',
+          companyName: metadata.company_name,
+          registrationNumber: metadata.registration_number,
+          jurisdiction: 'New Zealand',
+        });
+        console.log('✅ AuthService: OAuth profile created successfully');
+      } else {
+        console.log('✅ AuthService: Profile already exists, skipping creation');
+      }
+    } catch (error) {
+      console.error('❌ AuthService: Error in handleOAuthProfile:', error);
+      throw error;
     }
   }
 }
