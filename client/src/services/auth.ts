@@ -82,10 +82,15 @@ class AuthService {
 
   // Sign in with Google OAuth
   async signInWithGoogle(): Promise<{ error: AuthError | null }> {
+    // Use production URL for deployed version, localhost for development
+    const redirectUrl = window.location.hostname === 'localhost' 
+      ? 'http://localhost:3000/'
+      : `${window.location.origin}/`;
+      
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/`,
+        redirectTo: redirectUrl,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
